@@ -34,6 +34,16 @@ X=1200
 Y=700
 x=400
 y=430
+x2=30
+y2=100
+
+sta1=pygame.image.load("Data/f1.png")
+sta2=pygame.image.load("Data/f2.png")
+sta3=pygame.image.load("Data/f3.png")
+lock=pygame.image.load("Data/locker1.png")
+lock2=pygame.image.load("Data/locker1.png")
+block=True
+block2=True
 
 status="menu"
 def Menu():
@@ -88,9 +98,50 @@ def Menu():
     textRectttc.center = (X // 2,650)
     screen.blit(textttc, textRectttc)
 
+ 
+def Select():
+    screen.fill((0,0,0))
+    font = pygame.font.Font('freesansbold.ttf', 30)
+ 
+    text1 = font.render('Nível 1', True, "white")
 
+
+    textr1 = text1.get_rect()
+ 
+
+    textr1.center = (200, 100)
+    text2 = font.render('Nível 2', True, "white")
+
+
+    textr2 = text2.get_rect()
+ 
+
+    textr2.center = (200,300)
+    text3 = font.render('Nível 3', True, "white")
+
+
+    textr3 = text3.get_rect()
+ 
+
+    textr3.center = (200,500)
+    selectm = font.render('Selecione Nível', True, "white")
+
+    selectmr = selectm.get_rect()
+      
+
+    selectmr.center = (X//2,25)     
+    screen.blit(text1, textr1)
+    screen.blit(text2, textr2)
+    screen.blit(text3, textr3)
+    screen.blit(selectm, selectmr)
+    screen.blit(sta1,(600,70))
+    screen.blit(sta2,(600,270))
+    screen.blit(sta3,(600,470))
+    
+    pygame.display.flip()  
 running=True
 ativo=False
+levelzinho="Nivel1"
 jogador=Jogador()
 while running:
 
@@ -107,7 +158,7 @@ while running:
             if status=="menu":
                jogador=Jogador()
                Menu()
-               
+               ativo=False
             
                pygame.draw.rect(screen, (2,84,80), (x,y, 20,20))
                if e.type == pygame.KEYDOWN and e.key == pygame.K_UP :
@@ -148,6 +199,47 @@ while running:
                    
             if e.type == pygame.KEYDOWN and e.key == pygame.K_BACKSPACE :
                    status="menu"
+                   
+            if status=="seleção":
+             Select()
+           
+             pygame.draw.rect(screen, (2,84,80), (x2,y2, 20,20))
+             
+             if block==True:
+                 screen.blit(lock,(600,270))
+                 lock2.set_alpha(128)
+             if block2==True:
+                 screen.blit(lock2,(600,470))
+                 lock.set_alpha(128)
+             '''if pontos1!=0:
+                 block=False
+             if pontos2!=0:
+                 block2=False'''
+             if e.type == pygame.KEYDOWN and e.key == pygame.K_UP  :
+                if y2>300:
+                   y2=300
+                else:
+                    y2=100
+             if e.type == pygame.KEYDOWN and e.key == pygame.K_DOWN  :
+                if y2<300:
+                   y2=300
+                else:
+                    y2=500
+             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE and y2==100:
+                 
+                
+                 levelzinho="Nível 1"
+                 
+             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE and y2==300 :
+                 
+                 levelzinho="Nível 2"
+                 
+              
+                  
+             if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE and y2==500 :
+                 
+                 levelzinho="Nível 3"
+            
             if ativo:
             
              key = pygame.key.get_pressed()
