@@ -30,29 +30,62 @@ class Jogador(object):
         
           
 pygame.init()
+#vai guardar as dimençoes da tela
 dimensao=(1200,700)
-bg_w, bg_h = dimensao 
-bg = pygame.transform.smoothscale(pygame.image.load('data/fase01.png'), (bg_w, bg_h))
+bg_w, bg_h = dimensao
+
+gameover=pygame.image.load("Data/gameover.jpg")
+fase1='data/fase01.png'
+
+#vai carregar a imagem do cenario
+bg = pygame.transform.smoothscale(pygame.image.load(fase1), (bg_w, bg_h))
 pos_x = 0
 speed = 10
 
 screen=pygame.display.set_mode(dimensao)
 X=1200
 Y=700
+
+#coordenadas do ponteiro da tela principal
 x=400
 y=430
+
+#coordenadas do ponteiro da tela de seleção
 x2=30
 y2=100
 
+#miniatura das fases
 sta1=pygame.image.load("Data/f1.png")
 sta2=pygame.image.load("Data/f2.png")
 sta3=pygame.image.load("Data/f3.png")
+
+#cadeado para simbolisar que não esta liberada ainda
 lock=pygame.image.load("Data/locker1.png")
 lock2=pygame.image.load("Data/locker1.png")
 block=True
 block2=True
 
+#esta variavel é uma flag para medir quanto o player percorreu
+ponto=0
+score=''
+#status vai controlar qual tela esta sendo selecionada
 status="menu"
+
+#função para mostrar texto na tela
+def textinho(texto,x,y,tamanho):
+    
+    
+ 
+    font=pygame.font.Font('freesansbold.ttf', tamanho)
+    text = font.render(texto, True, "black")
+   
+
+    textRect = text.get_rect()
+
+    textRect.center = (x,y)
+    screen.blit(text, textRect)
+
+# função do menu
 def Menu():
     #icon=pygame.image.load("Data/icon.ico")
     #pygame.display.set_icon(icon)
@@ -105,7 +138,7 @@ def Menu():
     textRectttc.center = (X // 2,650)
     screen.blit(textttc, textRectttc)
 
- 
+#função da tela de seleção 
 def Select():
     screen.fill((0,0,0))
     font = pygame.font.Font('freesansbold.ttf', 30)
@@ -165,6 +198,7 @@ while running:
             if status=="menu":
                jogador=Jogador()
                Menu()
+               ponto=0
                ativo=False
             
                pygame.draw.rect(screen, (2,84,80), (x,y, 20,20))
@@ -181,13 +215,21 @@ while running:
 
                
             if status=="jogo":
+                
                 screen.fill('red')
                 allKeys = pygame.key.get_pressed()
                 pos_x += speed if allKeys[pygame.K_LEFT] else -speed if allKeys[pygame.K_RIGHT] else 0
-
+               
                 x_rel = pos_x % bg_w
                 x_part2 = x_rel - bg_w if x_rel > 0 else x_rel + bg_w
 
+                #condicionais da flag ponto
+                if allKeys[pygame.K_RIGHT] :
+                     ponto=ponto+1
+                if allKeys[pygame.K_LEFT] :
+                     ponto=ponto-1
+                
+                print(ponto)
                 screen.blit(bg, (x_rel, 0))
                 screen.blit(bg, (x_part2, 0))
             
@@ -229,6 +271,7 @@ while running:
                  block=False
              if pontos2!=0:
                  block2=False'''
+             
              if e.type == pygame.KEYDOWN and e.key == pygame.K_UP  :
                 if y2>300:
                    y2=300
@@ -253,7 +296,29 @@ while running:
              if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE and y2==500 :
                  
                  levelzinho="Nível 3"
-            
+
+
+                 
+            if ponto==100:
+                status="gameover"
+                
+            if status=="gameover":
+               ativo=False
+               screen.fill('pink')
+               screen.blit(gameover,(0,0))
+               score=str(ponto)
+               if e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+                   status="pontuação"
+
+            if status=="pontuação":
+                ponto=0
+                ativo=False
+                screen.fill('pink')
+                textinho("Pontuação",(1200//2),(700//2.5),48)
+                textinho(score,(1200//2),(700//2),48)
+                if e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN:
+                   status="menu"
+                   
             if ativo:
             
              key = pygame.key.get_pressed()
