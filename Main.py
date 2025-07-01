@@ -6,7 +6,7 @@ class Jogador(object):
         
         self.sprite=pygame.image.load("data\person.png")
         self.rect=self.sprite.get_rect()
-        self.rect.x=1200//2
+        self.rect.x=0
         self.rect.y=150
   
 
@@ -26,10 +26,17 @@ class Jogador(object):
         
         self.rect.x += dx
         self.rect.y += dy
-
+        
+        
+          
 pygame.init()
+dimensao=(1200,700)
+bg_w, bg_h = dimensao 
+bg = pygame.transform.smoothscale(pygame.image.load('data/fase01.png'), (bg_w, bg_h))
+pos_x = 0
+speed = 10
 
-screen=pygame.display.set_mode((1200,700))
+screen=pygame.display.set_mode(dimensao)
 X=1200
 Y=700
 x=400
@@ -175,8 +182,15 @@ while running:
                
             if status=="jogo":
                 screen.fill('red')
-                fase1=pygame.image.load("Data/fase01.png")
-                screen.blit(fase1,(10,10))
+                allKeys = pygame.key.get_pressed()
+                pos_x += speed if allKeys[pygame.K_LEFT] else -speed if allKeys[pygame.K_RIGHT] else 0
+
+                x_rel = pos_x % bg_w
+                x_part2 = x_rel - bg_w if x_rel > 0 else x_rel + bg_w
+
+                screen.blit(bg, (x_rel, 0))
+                screen.blit(bg, (x_part2, 0))
+            
                 jogador.draw(screen)
            
 
@@ -244,15 +258,21 @@ while running:
             
              key = pygame.key.get_pressed()
              if key[pygame.K_LEFT]:
-                jogador.move((-20), 0)
+                if jogador.rect.x>0:
+                  jogador.move((-20), 0)
+                else:
+            
+                  jogador.move((2), 0)
+                  
              if key[pygame.K_RIGHT]:
-                jogador.move(20, 0)
-             if key[pygame.K_UP]:
-                y=100
-             else:
-                y=150
-                jogador.move((-2), 0) 
-             
+                 if jogador.rect.x<700 :
+                     jogador.move(20, 0)
+                 else:
+                     jogador.move((-2), 0) 
+            
+          
+               
+            
             pygame.display.flip()
 pygame.quit()
 
