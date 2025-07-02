@@ -65,11 +65,22 @@ lock2=pygame.image.load("Data/locker1.png")
 block=True
 block2=True
 
+#variaveis de entrada de texto de pontuaçao
+text = ""
+input_active = True
+font = pygame.font.SysFont(None, 100)
 #esta variavel é uma flag para medir quanto o player percorreu
 ponto=0
 score=''
 #status vai controlar qual tela esta sendo selecionada
 status="menu"
+
+#configurações de audio
+musica1 = pygame.mixer.Sound("data/musica1.mp3")
+musica1.set_volume(0.40)
+
+musica2 = pygame.mixer.Sound("data/musica2.mp3")
+musica2.set_volume(0.40)
 
 #função para mostrar texto na tela
 def textinho(texto,x,y,tamanho):
@@ -196,6 +207,8 @@ while running:
        
               
             if status=="menu":
+               musica1.play(-1, 0, 1000)
+               musica2.stop()
                jogador=Jogador()
                Menu()
                ponto=0
@@ -215,7 +228,8 @@ while running:
 
                
             if status=="jogo":
-                
+                musica2.play(-1, 0, 1000)
+                musica1.stop()
                 screen.fill('red')
                 allKeys = pygame.key.get_pressed()
                 pos_x += speed if allKeys[pygame.K_LEFT] else -speed if allKeys[pygame.K_RIGHT] else 0
@@ -243,12 +257,12 @@ while running:
                 screen.blit(fase1,(0,0))
 
                 
-            if y==430 and e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+            if y==430 and e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE and status=="menu":
                    
                   
                    status="jogo"
                    ativo=True
-            if y==530 and e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE:
+            if y==530 and e.type == pygame.KEYDOWN and e.key == pygame.K_SPACE and status=="menu":
                 
                    screen.fill('yellow')
                    status="seleção"
@@ -314,11 +328,33 @@ while running:
                 ponto=0
                 ativo=False
                 screen.fill('pink')
-                textinho("Pontuação",(1200//2),(700//2.5),48)
-                textinho(score,(1200//2),(700//2),48)
-                if e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN:
-                   status="menu"
-                   
+                textinho("Pontuação",(1200//2),(700//1.5),48)
+                textinho(score,(1200//2),(700//1.7),48)
+               
+                
+                    
+           
+                if e.type == pygame.KEYDOWN and e.type == pygame.K_SPACE :
+                
+                 textinho("Digite o seu nome",(1200//2),(700//1.9),48)
+                 input_active = True
+                 text = " " # a variavel text é declada vazia
+               
+                if e.type ==pygame.KEYDOWN and input_active:
+                      if e.type == pygame.K_RETURN:#esse comando confirma o nome RETURN é o mesmo que a tecla ENTER)
+                           input_active = False
+                      elif e.key == pygame.K_DELETE:# esse comando permite apagar as letras
+                           text =  text[:-1]
+                      else:
+                           text += e.unicode#esse comando grava as letras dentro da variavel text
+                text_surf = font.render(text, True, (255, 0, 0)) # define a fonte, o texto, e a cor
+                screen.blit(text_surf, text_surf.get_rect(center = screen.get_rect().center))# exibe             
+    
+                if e.type == pygame.KEYDOWN and e.key == pygame.K_BACKSPACE:
+                    status="menu"
+                    cheio=text.len()
+                    text=text[:-cheio]
+               
             if ativo:
             
              key = pygame.key.get_pressed()
